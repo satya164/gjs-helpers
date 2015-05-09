@@ -1,50 +1,71 @@
 const Mainloop = imports.mainloop;
 
-function Promise(executer) {
-    if (typeof executer !== "function") {
-        throw new TypeError("Promise resolver " + executer + " is not a function");
+const PENDING = 0,
+      FULFILLED = 1,
+      REJECTED = 2;
+
+function Promise(executor) {
+    if (typeof executor !== "function") {
+        throw new TypeError("Promise resolver " + executor + " is not a function");
     }
 
-    this._onFullfilled = [];
-    this._onRejected = [];
+    // Create arrays to add handlers
+    this._handlers = {
+        fulfill: [],
+        reject: []
+    }
 
-    this._PromiseStatus = "pending";
+    // Set the promise status
+    this._state = PENDING;
 
-    let resolve = (value) => {
-        this._PromiseValue = value;
-        this._PromiseStatus = "resolved"
+    let resolve = value => {
+        // Promise is fulfilled
+        this._state = FULFILLED;
+        this._value = value;
 
-        for (let handler of this._onFullfilled) {
+        // Call all fulfillment handlers one by one
+        for (let handler of this._handlers.fulfill) {
             handler.call(this, value);
         }
     }
 
-    let reject = (reason) => {
-        this._PromiseValue = reason;
-        this._PromiseStatus = "rejected"
+    let reject = reason => {
+        // Promise is rejected
+        this._state = REJECTED;
+        this._value = reason;
 
-        if (this._onRejected.length === 0) {
+        // If no rejection handlers attached, throw error
+        if (this._handlers.reject.length === 0) {
             throw new Error("Uncaught (in promise) " + reason);
         }
 
-        for (let handler of this._onRejected) {
+        // Call all rejection handlers one by one
+        for (let handler of this._handlers.reject) {
             handler.call(this, reason);
         }
     }
 
+    // Run the executor at a delay to let all handlers attach
     Mainloop.timeout_add(10, () => {
-        executer(resolve, reject)
+        try {
+            executor(resolve, reject);
+        } catch (e) {
+            reject(e);
+        }
 
-        return false; // Repeat
+        return false; // Don't repeat
     }, null);
 }
 
-Promise.prototype.then = function(onFullfilled, onRejected) {
-    if (typeof onFullfilled === "function") {
-        if (this._PromiseStatus === "resolved") {
-            onFullfilled.call(this, this._PromiseValue);
+// Appends fulfillment and rejection handlers to the promise
+Promise.prototype.then = function(onFulfilled, onRejected) {
+    if (typeof onFulfilled === "function") {
+        if (this.PromiseStatus === REJECTED) {
+            // Promise is already fulfilled, call the handler with the value
+            onFulfilled.call(this, this._value);
         } else {
-            this._onFullfilled.push(onFullfilled);
+            // Promise hasn't fulfilled, add handler to the queue
+            this._handlers.fulfill.push(onFulfilled);
         }
     }
 
@@ -53,18 +74,23 @@ Promise.prototype.then = function(onFullfilled, onRejected) {
     return this;
 }
 
+// Appends a rejection handler callback to the promise
 Promise.prototype["catch"] = function(onRejected) {
     if (typeof onRejected === "function") {
-        if (this._PromiseStatus === "rejected") {
-            onRejected.call(this, this._PromiseValue);
+        if (this.PromiseStatus === REJECTED) {
+            // Promise is already rejected, call the handler with the value
+            onRejected.call(this, this._value);
         } else {
-            this._onRejected.push(onRejected);
+            // Promise hasn't rejected, add handler to the queue
+            this._handlers.reject.push(onRejected);
         }
     }
 
     return this;
 }
 
+// Returns a promise that resolves when all of the promises in the iterable
+// argument have resolved
 Promise.all = function(iterable) {
     let promises = iterable.filter(p => p instanceof Promise),
         values = [],
@@ -85,6 +111,9 @@ Promise.all = function(iterable) {
     });
 }
 
+// Returns a promise that resolves or rejects as soon as one of the promises
+// in the iterable resolves or rejects, with the value or reason from that
+// promise
 Promise.race = function(iterable) {
     let promises = iterable.filter(p => p instanceof Promise);
 
@@ -93,14 +122,12 @@ Promise.race = function(iterable) {
     });
 }
 
+// Returns a Promise object that is rejected with the given reason
 Promise.reject = function(reason) {
-    return new Promise((resolve, reject) => {
-        reject(reason);
-    });
+    return new Promise((resolve, reject) => reject(reason));
 }
 
+// Returns a Promise object that is resolved with the given value
 Promise.resolve = function(value) {
-    return new Promise((resolve) => {
-        resolve(value);
-    });
+    return new Promise(resolve => resolve(value));
 }
