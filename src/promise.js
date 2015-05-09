@@ -60,7 +60,7 @@ function Promise(executor) {
 // Appends fulfillment and rejection handlers to the promise
 Promise.prototype.then = function(onFulfilled, onRejected) {
     if (typeof onFulfilled === "function") {
-        if (this.PromiseStatus === REJECTED) {
+        if (this._state === FULFILLED) {
             // Promise is already fulfilled, call the handler with the value
             onFulfilled.call(this, this._value);
         } else {
@@ -77,7 +77,7 @@ Promise.prototype.then = function(onFulfilled, onRejected) {
 // Appends a rejection handler callback to the promise
 Promise.prototype["catch"] = function(onRejected) {
     if (typeof onRejected === "function") {
-        if (this.PromiseStatus === REJECTED) {
+        if (this._state === REJECTED) {
             // Promise is already rejected, call the handler with the value
             onRejected.call(this, this._value);
         } else {
