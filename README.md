@@ -1,2 +1,2 @@
-# gjs-examples
-GNOME JavaScript examples
+# gjs-helpers
+GNOME JavaScript helpers
