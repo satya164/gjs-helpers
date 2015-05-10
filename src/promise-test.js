@@ -7,6 +7,18 @@ const setTimeout = imports.timing.setTimeout;
 const Promise = imports.promise.Promise;
 
 describe("promises", () => {
+    it("should throw error when called without 'new'", (assert) => {
+        assert["throws"](() => Promise(resolve => resolve()));
+    });
+
+    it("should throw error when called without a function", (assert) => {
+        assert["throws"](() => {
+            let promise = new Promise(null);
+
+            promise.then(() => {});
+        });
+    });
+
     it("should resolve promise", (assert, done) => {
         let promise = new Promise(resolve => {
             setTimeout(resolve, 50);

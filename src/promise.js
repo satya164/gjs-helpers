@@ -5,7 +5,7 @@ const PENDING = 0,
       REJECTED = 2;
 
 function Promise(executor) {
-    if (!this instanceof Promise) {
+    if (false === (this instanceof Promise)) {
         throw new TypeError("Promises must be constructed via new");
     }
 
@@ -13,7 +13,7 @@ function Promise(executor) {
         throw new TypeError("Promise resolver " + executor + " is not a function");
     }
 
-    // Create arrays to add handlers
+    // Create an array to add handlers
     this._deferreds = [];
 
     // Set the promise status
@@ -96,10 +96,11 @@ function Promise(executor) {
         // Call all fulfillment handlers one by one
         try {
             if (value === this) {
-                throw new TypeError("A promise cannot be resolved with itself.");
+                throw new TypeError("A promise cannot be resolved with itself");
             }
 
             if (value && (typeof value === "object" || typeof value === "function")) {
+                // If returned value is a thenable, treat is as a promise
                 if (typeof value.then === "function") {
                     doresolve(value.then.bind(value), resolve.bind(this), reject.bind(this));
 
@@ -107,6 +108,7 @@ function Promise(executor) {
                 }
             }
 
+            // Promise is fulfilled
             this._state = FULFILLED;
             this._value = value;
 
