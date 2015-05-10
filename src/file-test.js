@@ -79,13 +79,46 @@ describe("file", () => {
             });
     });
 
+    it("should copy file", (assert, done) => {
+        let oldpath = "/tmp/file-copy-test-" + Math.random() + "-old",
+            newpath = "/tmp/file-copy-test-" + Math.random() + "-new";
+
+        let file = new File(oldpath);
+
+        file.create()
+            .then(() => file.copyto(newpath))
+            .then(() => file.exists())
+            .then(res => {
+                if (res) {
+                    let newfile = new File(newpath);
+
+                    newfile.exists()
+                        .then(r => {
+                            assert.ok(r);
+                            done();
+                        })
+                        ["catch"](() => {
+                            assert.ok(false);
+                            done();
+                        });
+                } else {
+                    assert.ok(false);
+                    done();
+                }
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
+    });
+
     it("should move file", (assert, done) => {
         let oldpath = "/tmp/file-move-test-" + Math.random() + "-old",
             newpath = "/tmp/file-move-test-" + Math.random() + "-new";
 
         let file = new File(oldpath);
 
-        file.create("")
+        file.create()
             .then(() => file.moveto(newpath))
             .then(() => file.exists())
             .then(res => {
@@ -112,10 +145,28 @@ describe("file", () => {
             });
     });
 
+    it("should rename file", (assert, done) => {
+        let file = new File("/tmp/file-rename-test-" + Math.random()),
+            name = "file-rename-test-renamed-" + Math.random(),
+            newfile = new File(name);
+
+        file.create()
+            .then(() => file.rename(name))
+            .then(() => newfile.exists())
+            .then(res => {
+                assert.ok(!res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
+    });
+
     it("should delete file", (assert, done) => {
         let file = new File("/tmp/file-delete-test-" + Math.random());
 
-        file.create("Apple, ")
+        file.create()
             .then(() => file["delete"]())
             .then(() => file.exists())
             .then(res => {

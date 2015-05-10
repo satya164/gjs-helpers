@@ -29,7 +29,7 @@ File.prototype.create = function(text, replace) {
     return new Promise(resolve => {
         let outputstream = this.file.create(Gio.FileCreateFlags[replace ? "REPLACE_DESTINATION" : "NONE"], null);
 
-        outputstream.write_all(text, null);
+        outputstream.write_all(typeof text === "string" ? text : "", null);
 
         outputstream.close(null);
 
@@ -49,10 +49,18 @@ File.prototype.append = function(text) {
     });
 }
 
+File.prototype.copyto = function(path, replace) {
+    return new Promise(resolve => resolve(this.file.copy(new File(path).file, Gio.FileCopyFlags[replace ? "OVERWRITE" : "NONE"], null, null)));
+}
+
 File.prototype.moveto = function(path) {
-    return new Promise(resolve => resolve(this.file.move(new File(path).file,
-                                                         Gio.FileCopyFlags.NONE,
-                                                         null, null)));
+    return new Promise(resolve => resolve(this.file.move(new File(path).file, Gio.FileCopyFlags.NONE, null, null)));
+}
+
+File.prototype.rename = function(name) {
+    return new Promise(resolve => {
+        this.file.set_display_name_async(name, GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.set_display_name_finish(res)));
+    });
 }
 
 File.prototype["delete"] = function() {
@@ -68,13 +76,5 @@ File.prototype.mkdir = function() {
 }
 
 File.prototype.symlinkto = function(path) {
-    return new Promise((resolve, reject) => {
-        this.exists().then(res => {
-            if (res) {
-                reject(new Error("A file already exists at " + path));
-            }
-
-            resolve(this.file.make_symbolic_link(path, null));
-        });
-    });
+    return new Promise(resolve => resolve(this.file.make_symbolic_link(path, null)));
 }
