@@ -1,5 +1,3 @@
-// Timing events from - https://github.com/optimisme/gjs-examples
-
 const GLib = imports.gi.GLib;
 
 const setTimeout = (func, millis) => {
