@@ -27,59 +27,58 @@ function Promise(executor) {
             return;
         }
 
-        let cb = this._state === FULFILLED ? deferred.onFulfilled : deferred.onRejected;
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            let cb = this._state === FULFILLED ? deferred.onFulfilled : deferred.onRejected;
 
-        if (cb === null) {
-            (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
-        }
+            if (cb === null) {
+                (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
+            }
 
-        let ret;
+            let ret;
 
-        try {
-            ret = cb(this._value);
-        } catch (e) {
-            deferred.reject(e);
+            try {
+                ret = cb(this._value);
+            } catch (e) {
+                deferred.reject(e);
 
-            return;
-        }
+                return;
+            }
 
-        deferred.resolve(ret);
+            deferred.resolve(ret);
+        });
     }
 
     let doresolve = (fn, onFulfilled, onRejected) => {
         let done = false;
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
-            try {
-                fn(value => {
-                    if (done) {
-                        return;
-                    }
-
-                    done = true;
-
-                    onFulfilled(value);
-                }, function(reason) {
-                    if (done) {
-                        return;
-                    }
-
-                    done = true;
-
-                    onRejected(reason);
-                })
-            } catch (e) {
+        try {
+            fn(value => {
                 if (done) {
-                    return false;
+                    return;
                 }
 
                 done = true;
 
-                onRejected(e);
+                onFulfilled(value);
+            }, function(reason) {
+                if (done) {
+                    return;
+                }
+
+                done = true;
+
+                onRejected(reason);
+            })
+        } catch (e) {
+            if (done) {
+                return;
             }
 
-            return false; // Don't repeat
-        });
+            done = true;
+
+            onRejected(e);
+        }
+
     }
 
     let finale = () => {
