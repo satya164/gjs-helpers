@@ -12,7 +12,7 @@
     "requireOperatorBeforeLineBreak": true,
     "requireParenthesesAroundIIFE": true,
     "requireCommaBeforeLineBreak": true,
-    "requireDotNotation": "except_snake_case",
+    "requireDotNotation": false,
     "requireSpacesInForStatement": true,
     "requireSpaceBetweenArguments": true,
     "maximumLineLength": {
