@@ -28,19 +28,27 @@ Assert.prototype.notEqual = function(actual, expected, msg) {
 }
 
 Assert.prototype["throws"] = function(func, msg) {
+    let thrown = false;
+
     try {
         func()
     } catch (e) {
-        this.ok(true, msg);
+        thrown = true;
     }
+
+    this.ok(thrown, msg);
 }
 
 Assert.prototype.doesNotThrow = function(func, msg) {
+    let thrown = false;
+
     try {
         func()
     } catch (e) {
-        this.ok(false, msg);
+        thrown = true;
     }
+
+    this.ok(!thrown, msg);
 }
 
 function it(desc, callback) {
