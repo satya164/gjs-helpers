@@ -23,16 +23,14 @@ function it(desc, callback) {
     callback(assert.bind({
         index: index,
         desc: desc
-    }), done.bind(this, loop));
+    }), () => {
+        if (loop) {
+            loop.quit();
+        }
+    });
 
     if (loop) {
         loop.run();
-    }
-}
-
-function done(loop) {
-    if (loop) {
-        loop.quit();
     }
 }
 
