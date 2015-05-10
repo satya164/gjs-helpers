@@ -15,7 +15,7 @@ describe("promises", () => {
         })
 
         promise.then(() => {
-            assert(true);
+            assert.ok(true);
             done();
         });
     });
@@ -26,7 +26,7 @@ describe("promises", () => {
         })
 
         promise["catch"](() => {
-            assert(true);
+            assert.ok(true);
             done();
         });
     });
@@ -37,7 +37,7 @@ describe("promises", () => {
         });
 
         promise["catch"](() => {
-            assert(true);
+            assert.ok(true);
             done();
         });
     });
@@ -64,7 +64,7 @@ describe("promises", () => {
         }));
 
         Promise.all(promises).then(value => {
-            assert(value[0] === 5 && value[1] === 7 && value[2] === 3);
+            assert.ok(value[0] === 5 && value[1] === 7 && value[2] === 3);
             done();
         });
     });
@@ -98,7 +98,7 @@ describe("promises", () => {
 
             resolved = (value === 5);
 
-            assert(true);
+            assert.ok(true);
             done();
         });
     });
@@ -130,9 +130,9 @@ describe("promises", () => {
                 return;
             }
 
-            resolved = (value === 5);
+            resolved = true;
 
-            assert(true);
+            assert.equal(value, 5);
             done();
         });
     });
@@ -141,7 +141,7 @@ describe("promises", () => {
         let promise = Promise.resolve(12);
 
         promise.then(value => {
-            assert(value === 12);
+            assert.equal(value, 12);
             done();
         });
     });
@@ -150,7 +150,7 @@ describe("promises", () => {
         let promise = Promise.reject(12);
 
         promise["catch"](value => {
-            assert(value === 12);
+            assert.equal(value, 12);
             done();
         });
     });

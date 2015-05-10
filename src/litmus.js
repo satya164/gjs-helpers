@@ -1,29 +1,55 @@
 const GLib = imports.gi.GLib;
 
-let index = 0;
+let count = 0;
 
-function assert(value, err) {
-    let msg = this.index + ". " + this.desc;
+function Assert(desc, index) {
+    this.desc = desc;
+    this.index = index;
+}
 
-    if (value) {
-        msg = "✔ passed : " + msg;
+Assert.prototype.ok = function(actual, msg) {
+    let title = this.index + ". " + this.desc;
+
+    if (actual) {
+        title = "✔ passed : " + title;
     } else {
-        msg = "❌ failed : " + msg + (err ? " : " + err : "");
+        title = "❌ failed : " + title + (msg ? " : " + msg : "");
     }
 
-    print("    " + msg);
+    print("    " + title);
+}
+
+Assert.prototype.equal = function(actual, expected, msg) {
+    this.ok((actual === expected), msg);
+}
+
+Assert.prototype.notEqual = function(actual, expected, msg) {
+    this.ok((actual !== expected), msg);
+}
+
+Assert.prototype["throws"] = function(func, msg) {
+    try {
+        func()
+    } catch (e) {
+        this.ok(true, msg);
+    }
+}
+
+Assert.prototype.doesNotThrow = function(func, msg) {
+    try {
+        func()
+    } catch (e) {
+        this.ok(false, msg);
+    }
 }
 
 function it(desc, callback) {
-    index++;
+    count++;
 
     // Assume async only if callback is receiving more than 1 argument
     let loop = callback.length > 1 ? new GLib.MainLoop(null, false) : null;
 
-    callback(assert.bind({
-        index: index,
-        desc: desc
-    }), () => {
+    callback(new Assert(desc, count), () => {
         if (loop) {
             loop.quit();
         }
@@ -35,7 +61,7 @@ function it(desc, callback) {
 }
 
 function describe(desc, callback) {
-    index = 0;
+    count = 0;
 
     print("  " + desc + " :");
 

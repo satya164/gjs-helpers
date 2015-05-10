@@ -13,7 +13,7 @@ describe("timing events", () => {
         let time = Date.now();
 
         setTimeout(() => {
-            assert((Date.now() - time - 1000) < 10);
+            assert.ok((Date.now() - time - 1000) < 10);
             done();
         }, 1000);
     });
@@ -24,7 +24,7 @@ describe("timing events", () => {
         let id = setTimeout(() => {
             called = true;
 
-            assert(false);
+            assert.ok(false);
             done();
         }, 1000);
 
@@ -33,7 +33,7 @@ describe("timing events", () => {
                 return;
             }
 
-            assert(true);
+            assert.ok(true);
             done();
         }, 1500);
 
@@ -50,7 +50,7 @@ describe("timing events", () => {
             if (i === 5) {
                 clearInterval(id);
 
-                assert((Date.now() - time - (500 * 5)) < 10);
+                assert.ok((Date.now() - time - (500 * 5)) < 10);
                 done();
             }
         }, 500);
