@@ -79,18 +79,18 @@ describe("file", () => {
             });
     });
 
-    it("should rename file", (assert, done) => {
-        let oldname = "/tmp/file-rename-test-" + Math.random() + "-old",
-            newname = "/tmp/file-rename-test-" + Math.random() + "-new";
+    it("should move file", (assert, done) => {
+        let oldpath = "/tmp/file-move-test-" + Math.random() + "-old",
+            newpath = "/tmp/file-move-test-" + Math.random() + "-new";
 
-        let file = new File(oldname);
+        let file = new File(oldpath);
 
         file.create("")
-            .then(() => file.rename(newname))
+            .then(() => file.move(newpath))
             .then(() => file.exists())
             .then(res => {
                 if (!res) {
-                    let newfile = new File(newname);
+                    let newfile = new File(newpath);
 
                     newfile.exists()
                         .then(r => {

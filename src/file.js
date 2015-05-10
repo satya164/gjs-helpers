@@ -49,7 +49,7 @@ File.prototype.append = function(text) {
     });
 }
 
-File.prototype.rename = function(path) {
+File.prototype.move = function(path) {
     return new Promise(resolve => resolve(this.file.move(new File(path).file,
                                                          Gio.FileCopyFlags.NONE,
                                                          null, null)));
