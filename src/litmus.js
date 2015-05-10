@@ -1,6 +1,7 @@
 const GLib = imports.gi.GLib;
 
-let count = 0;
+let testcount = 0,
+    donecount = 0;
 
 function assert(value, err) {
     let msg = this.index + ". " + this.desc;
@@ -15,38 +16,37 @@ function assert(value, err) {
 }
 
 function it(desc, callback) {
-    this.index = (typeof this.index === "number") ? this.index : 1;
-
-    this.desc = desc;
+    testcount++;
 
     callback(assert.bind({
-        index: this.index,
-        desc: this.desc
+        index: testcount,
+        desc: desc
     }));
-
-    this.index++;
-
-    count++;
 }
 
 function done(loop) {
-    this.num++;
+    donecount++;
 
-    if (this.num === count) {
-        count = 0;
+    if (donecount === testcount) {
+        testcount = donecount = 0;
 
-        loop.quit();
+        if (loop) {
+            loop.quit();
+        }
     }
 }
 
 function describe(desc, callback) {
-    let loop = new GLib.MainLoop(null, false);
+    testcount = donecount = 0;
 
     print("  " + desc + " :");
 
-    this.num = 0;
+    // Assume async only if callback is receiving at least 1 argument
+    let loop = callback.length ? new GLib.MainLoop(null, false) : null;
 
     callback(done.bind(this, loop));
 
-    loop.run();
+    if (loop) {
+        loop.run();
+    }
 }
