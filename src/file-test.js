@@ -128,6 +128,21 @@ describe("file", () => {
             });
     });
 
+    it("should create directory", (assert, done) => {
+        let file = new File("/tmp/file-mkdir-test-" + Math.random());
+
+        file.mkdir()
+            .then(() => file.exists())
+            .then(res => {
+                assert.ok(res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
+    });
+
     it("should create symlink to file", (assert, done) => {
         let file = new File("/tmp/file-symlink-test-" + Math.random());
 

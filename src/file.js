@@ -33,7 +33,7 @@ File.prototype.create = function(text, replace) {
 
         outputstream.close(null);
 
-        resolve(true);
+        resolve();
     });
 }
 
@@ -45,7 +45,7 @@ File.prototype.append = function(text) {
 
         outputstream.close(null);
 
-        resolve(true);
+        resolve();
     });
 }
 
@@ -57,7 +57,13 @@ File.prototype.rename = function(path) {
 
 File.prototype["delete"] = function() {
     return new Promise(resolve => {
-        this.file.delete_async(GLib.PRIORITY_DEFAULT, null, () => resolve(!this.exists()));
+        this.file.delete_async(GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.delete_finish(res)));
+    });
+}
+
+File.prototype.mkdir = function() {
+    return new Promise(resolve => {
+        this.file.make_directory_async(GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.make_directory_finish(res)));
     });
 }
 
