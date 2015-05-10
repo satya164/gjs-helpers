@@ -60,3 +60,15 @@ File.prototype["delete"] = function() {
         this.file.delete_async(GLib.PRIORITY_DEFAULT, null, () => resolve(!this.exists()));
     });
 }
+
+File.prototype.symlink = function(path) {
+    return new Promise((resolve, reject) => {
+        this.exists().then(res => {
+            if (res) {
+                reject(new Error("A file already exists at " + path));
+            }
+
+            resolve(this.file.make_symbolic_link(path, null));
+        });
+    });
+}
