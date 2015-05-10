@@ -9,43 +9,62 @@ describe("file", () => {
     it("should tell if file exits", (assert, done) => {
         let file = new File("/etc/hosts");
 
-        file.exists().then(res => {
-            assert.ok(res);
-            done();
-        })
+        file.exists()
+            .then(res => {
+                assert.ok(res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
     });
 
     it("should tell if file doesn't exist", (assert, done) => {
         let file = new File("/path/to/some/file");
 
-        file.exists().then(res => {
-            assert.ok(!res);
-            done();
-        })
+        file.exists()
+            .then(res => {
+                assert.ok(!res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
     });
 
     it("should read file contents", (assert, done) => {
         let file = new File("/etc/hosts");
 
-        file.read().then(res => {
-            assert.ok(/localhost/.test(res));
-            done();
-        })
+        file.read()
+            .then(res => {
+                assert.ok(/localhost/.test(res));
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
     });
 
     it("should create file with contents", (assert, done) => {
-        let file = new File("/tmp/file-test-" + Math.random());
+        let file = new File("/tmp/file-write-test-" + Math.random());
 
         file.create("Hello world!")
             .then(() => file.read())
             .then(res => {
                 assert.equal(res, "Hello world!");
                 done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
             });
     });
 
     it("should append to file", (assert, done) => {
-        let file = new File("/tmp/file-test-" + Math.random());
+        let file = new File("/tmp/file-append-test-" + Math.random());
 
         file.create("Apple, ")
             .then(() => file.append("Orange!"))
@@ -53,12 +72,16 @@ describe("file", () => {
             .then(res => {
                 assert.equal(res, "Apple, Orange!");
                 done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
             });
     });
 
     it("should rename file", (assert, done) => {
-        let oldname = "/tmp/file-test-" + Math.random() + "-old",
-            newname = "/tmp/file-test-" + Math.random() + "-new";
+        let oldname = "/tmp/file-rename-test-" + Math.random() + "-old",
+            newname = "/tmp/file-rename-test-" + Math.random() + "-new";
 
         let file = new File(oldname);
 
@@ -69,25 +92,52 @@ describe("file", () => {
                 if (!res) {
                     let newfile = new File(newname);
 
-                    newfile.exists().then(r => {
-                        assert.ok(r);
-                        done();
-                    })
+                    newfile.exists()
+                        .then(r => {
+                            assert.ok(r);
+                            done();
+                        })
+                        ["catch"](() => {
+                            assert.ok(false);
+                            done();
+                        });
                 } else {
                     assert.ok(res);
                     done();
                 }
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
             });
     });
 
     it("should delete file", (assert, done) => {
-        let file = new File("/tmp/file-test-" + Math.random());
+        let file = new File("/tmp/file-delete-test-" + Math.random());
 
         file.create("Apple, ")
             .then(() => file["delete"]())
             .then(() => file.exists())
             .then(res => {
                 assert.ok(!res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
+                done();
+            });
+    });
+
+    it("should create symlink to file", (assert, done) => {
+        let file = new File("/tmp/file-symlink-test-" + Math.random());
+
+        file.symlink("/path/to/some/file")
+            .then(res => {
+                assert.ok(res);
+                done();
+            })
+            ["catch"](() => {
+                assert.ok(false);
                 done();
             });
     });
