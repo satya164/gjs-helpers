@@ -8,8 +8,8 @@ const it = imports.litmus.it;
 const setTimeout = imports.timing.setTimeout;
 const Promise = imports.promise.Promise;
 
-describe("promises", done => {
-    it("should resolve promise", assert => {
+describe("promises", () => {
+    it("should resolve promise", (assert, done) => {
         let promise = new Promise(resolve => {
             setTimeout(resolve, 50);
         })
@@ -20,7 +20,7 @@ describe("promises", done => {
         });
     });
 
-    it("should reject promise", assert => {
+    it("should reject promise", (assert, done) => {
         let promise = new Promise((resolve, reject) => {
             setTimeout(reject, 50);
         })
@@ -31,7 +31,7 @@ describe("promises", done => {
         });
     });
 
-    it("should reject promise on error", assert => {
+    it("should reject promise on error", (assert, done) => {
         let promise = new Promise(() => {
             throw new Error();
         });
@@ -42,7 +42,7 @@ describe("promises", done => {
         });
     });
 
-    it("should resolve as all promises resolve", assert => {
+    it("should resolve as all promises resolve", (assert, done) => {
         let promises = [];
 
         promises.push(new Promise(resolve => {
@@ -69,7 +69,7 @@ describe("promises", done => {
         });
     });
 
-    it("should resolve as first promise resolves", assert => {
+    it("should resolve as first promise resolves", (assert, done) => {
         let promises = [],
             resolved = false;
 
@@ -103,7 +103,7 @@ describe("promises", done => {
         });
     });
 
-    it("should reject as first promise rejects", assert => {
+    it("should reject as first promise rejects", (assert, done) => {
         let promises = [],
             resolved = false;
 
@@ -137,7 +137,7 @@ describe("promises", done => {
         });
     });
 
-    it("should resolve promise with value", assert => {
+    it("should resolve promise with value", (assert, done) => {
         let promise = Promise.resolve(12);
 
         promise.then(value => {
@@ -146,7 +146,7 @@ describe("promises", done => {
         });
     });
 
-    it("should reject promise with value", assert => {
+    it("should reject promise with value", (assert, done) => {
         let promise = Promise.reject(12);
 
         promise["catch"](value => {

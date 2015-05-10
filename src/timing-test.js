@@ -8,8 +8,8 @@ const clearTimeout = imports.timing.clearTimeout;
 const setInterval = imports.timing.setInterval;
 const clearInterval = imports.timing.clearInterval;
 
-describe("timing events", done => {
-    it("should finish in 1 second", assert => {
+describe("timing events", () => {
+    it("should finish in 1 second", (assert, done) => {
         let time = Date.now();
 
         setTimeout(() => {
@@ -18,7 +18,7 @@ describe("timing events", done => {
         }, 1000);
     });
 
-    it("should clear timeout", assert => {
+    it("should clear timeout", (assert, done) => {
         let called = false;
 
         let id = setTimeout(() => {
@@ -40,7 +40,7 @@ describe("timing events", done => {
         clearTimeout(id);
     });
 
-    it("should run in .5 second interval for 5 times", assert => {
+    it("should run in .5 second interval for 5 times", (assert, done) => {
         let time = Date.now(),
             i = 0;
 
