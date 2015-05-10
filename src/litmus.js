@@ -1,3 +1,5 @@
+const GLib = imports.gi.GLib;
+
 let count = 0;
 
 function assert(value, err) {
@@ -27,20 +29,24 @@ function it(desc, callback) {
     count++;
 }
 
-function done(end) {
+function done(loop) {
     this.num++;
 
-    if (this.num === count && typeof end === "function") {
-        end();
-
+    if (this.num === count) {
         count = 0;
+
+        loop.quit();
     }
 }
 
-function describe(desc, callback, end) {
+function describe(desc, callback) {
+    let loop = new GLib.MainLoop(null, false);
+
     print("  " + desc + " :");
 
     this.num = 0;
 
-    callback(done.bind(this, end));
+    callback(done.bind(this, loop));
+
+    loop.run();
 }
