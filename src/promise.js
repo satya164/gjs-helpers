@@ -18,6 +18,7 @@ function Promise(executor) {
 
     // Set the promise status
     this._state = PENDING;
+    this._caught = false;
 
     this._handle = deferred => {
         if (this._state === PENDING) {
@@ -26,62 +27,59 @@ function Promise(executor) {
             return;
         }
 
-        // Run at a delay to let all handlers attach
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
-            let cb = this._state === FULFILLED ? deferred.onFulfilled : deferred.onRejected;
+        let cb = this._state === FULFILLED ? deferred.onFulfilled : deferred.onRejected;
 
-            if (cb === null) {
-                (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
+        if (cb === null) {
+            (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
+        }
 
-                return false;
-            }
+        let ret;
 
-            let ret;
+        try {
+            ret = cb(this._value);
+        } catch (e) {
+            deferred.reject(e);
 
-            try {
-                ret = cb(this._value);
-            } catch (e) {
-                deferred.reject(e);
+            return;
+        }
 
-                return false;
-            }
-
-            deferred.resolve(ret);
-
-            return false; // Don't repeat
-        });
+        deferred.resolve(ret);
     }
 
     let doresolve = (fn, onFulfilled, onRejected) => {
         let done = false;
 
-        try {
-            fn(value => {
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            try {
+                fn(value => {
+                    if (done) {
+                        return;
+                    }
+
+                    done = true;
+
+                    onFulfilled(value);
+                }, function(reason) {
+                    if (done) {
+                        return;
+                    }
+
+                    done = true;
+
+                    onRejected(reason);
+                })
+            } catch (e) {
                 if (done) {
-                    return;
+                    return false;
                 }
 
                 done = true;
 
-                onFulfilled(value);
-            }, function(reason) {
-                if (done) {
-                    return;
-                }
-
-                done = true;
-
-                onRejected(reason);
-            })
-        } catch (e) {
-            if (done) {
-                return;
+                onRejected(e);
             }
 
-            done = true;
-
-            onRejected(e);
-        }
+            return false; // Don't repeat
+        });
     }
 
     let finale = () => {
