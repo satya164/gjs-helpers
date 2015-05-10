@@ -1,5 +1,3 @@
-const GLib = imports.gi.GLib;
-
 imports.searchPath.unshift(".");
 
 const describe = imports.litmus.describe;
