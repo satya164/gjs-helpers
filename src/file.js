@@ -33,7 +33,7 @@ File.prototype.create = function(text, replace) {
 
         outputstream.close(null);
 
-        resolve();
+        resolve(true);
     });
 }
 
@@ -45,7 +45,7 @@ File.prototype.append = function(text) {
 
         outputstream.close(null);
 
-        resolve();
+        resolve(true);
     });
 }
 
