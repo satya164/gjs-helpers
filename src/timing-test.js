@@ -1,11 +1,7 @@
-const GLib = imports.gi.GLib;
-
 imports.searchPath.unshift(".");
 
 const describe = imports.litmus.describe;
 const it = imports.litmus.it;
-
-let loop = new GLib.MainLoop(null, false);
 
 const setTimeout = imports.timing.setTimeout;
 const clearTimeout = imports.timing.clearTimeout;
@@ -59,6 +55,4 @@ describe("timing events", done => {
             }
         }, 500);
     });
-}, () => loop.quit());
-
-loop.run();
+});
