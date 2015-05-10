@@ -5,27 +5,114 @@ const PENDING = 0,
       REJECTED = 2;
 
 function Promise(executor) {
+    if (!this instanceof Promise) {
+        throw new TypeError("Promises must be constructed via new");
+    }
+
     if (typeof executor !== "function") {
         throw new TypeError("Promise resolver " + executor + " is not a function");
     }
 
     // Create arrays to add handlers
-    this._handlers = {
-        fulfill: [],
-        reject: []
-    }
+    this._deferreds = [];
 
     // Set the promise status
     this._state = PENDING;
 
-    let resolve = value => {
-        // Promise is fulfilled
-        this._state = FULFILLED;
-        this._value = value;
+    this._handle = deferred => {
+        if (this._state === PENDING) {
+            this._deferreds.push(deferred);
 
+            return;
+        }
+
+        // Run at a delay to let all handlers attach
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            let cb = this._state === FULFILLED ? deferred.onFulfilled : deferred.onRejected;
+
+            if (cb === null) {
+                (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
+
+                return false;
+            }
+
+            let ret;
+
+            try {
+                ret = cb(this._value);
+            } catch (e) {
+                deferred.reject(e);
+
+                return false;
+            }
+
+            deferred.resolve(ret);
+
+            return false; // Don't repeat
+        });
+    }
+
+    let doresolve = (fn, onFulfilled, onRejected) => {
+        let done = false;
+
+        try {
+            fn(value => {
+                if (done) {
+                    return;
+                }
+
+                done = true;
+
+                onFulfilled(value);
+            }, function(reason) {
+                if (done) {
+                    return;
+                }
+
+                done = true;
+
+                onRejected(reason);
+            })
+        } catch (e) {
+            if (done) {
+                return;
+            }
+
+            done = true;
+
+            onRejected(e);
+        }
+    }
+
+    let finale = () => {
+        for (var i = 0, len = this._deferreds.length; i < len; i++) {
+            this._handle.call(this, this._deferreds[i]);
+        }
+
+        this._deferreds = null;
+    }
+
+    let resolve = value => {
         // Call all fulfillment handlers one by one
-        for (let handler of this._handlers.fulfill) {
-            handler.call(this, value);
+        try {
+            if (value === this) {
+                throw new TypeError("A promise cannot be resolved with itself.");
+            }
+
+            if (value && (typeof value === "object" || typeof value === "function")) {
+                if (typeof value.then === "function") {
+                    doresolve(value.then.bind(value), resolve.bind(this), reject.bind(this));
+
+                    return;
+                }
+            }
+
+            this._state = FULFILLED;
+            this._value = value;
+
+            finale.call(this);
+        } catch (e) {
+            reject.call(this, e);
         }
     }
 
@@ -34,59 +121,27 @@ function Promise(executor) {
         this._state = REJECTED;
         this._value = reason;
 
-        // If no rejection handlers attached, throw error
-        if (this._handlers.reject.length === 0) {
-            throw new Error("Uncaught (in promise) " + reason);
-        }
-
-        // Call all rejection handlers one by one
-        for (let handler of this._handlers.reject) {
-            handler.call(this, reason);
-        }
+        finale.call(this);
     }
 
-    // Run the executor at a delay to let all handlers attach
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 10, () => {
-        try {
-            executor(resolve, reject);
-        } catch (e) {
-            reject(e);
-        }
-
-        return false; // Don't repeat
-    });
+    doresolve(executor, resolve.bind(this), reject.bind(this));
 }
 
 // Appends fulfillment and rejection handlers to the promise
 Promise.prototype.then = function(onFulfilled, onRejected) {
-    if (typeof onFulfilled === "function") {
-        if (this._state === FULFILLED) {
-            // Promise is already fulfilled, call the handler with the value
-            onFulfilled.call(this, this._value);
-        } else {
-            // Promise hasn't fulfilled, add handler to the queue
-            this._handlers.fulfill.push(onFulfilled);
-        }
-    }
-
-    this["catch"](onRejected);
-
-    return this;
+    return new Promise((resolve, reject) => {
+        this._handle.call(this, {
+            resolve: resolve,
+            reject: reject,
+            onFulfilled: onFulfilled,
+            onRejected: onRejected
+        });
+    });
 }
 
 // Appends a rejection handler callback to the promise
 Promise.prototype["catch"] = function(onRejected) {
-    if (typeof onRejected === "function") {
-        if (this._state === REJECTED) {
-            // Promise is already rejected, call the handler with the value
-            onRejected.call(this, this._value);
-        } else {
-            // Promise hasn't rejected, add handler to the queue
-            this._handlers.reject.push(onRejected);
-        }
-    }
-
-    return this;
+    return this.then(null, onRejected);
 }
 
 // Returns a promise that resolves when all of the promises in the iterable
