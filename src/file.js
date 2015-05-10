@@ -49,7 +49,7 @@ File.prototype.append = function(text) {
     });
 }
 
-File.prototype.move = function(path) {
+File.prototype.moveto = function(path) {
     return new Promise(resolve => resolve(this.file.move(new File(path).file,
                                                          Gio.FileCopyFlags.NONE,
                                                          null, null)));
@@ -67,7 +67,7 @@ File.prototype.mkdir = function() {
     });
 }
 
-File.prototype.symlink = function(path) {
+File.prototype.symlinkto = function(path) {
     return new Promise((resolve, reject) => {
         this.exists().then(res => {
             if (res) {

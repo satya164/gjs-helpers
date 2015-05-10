@@ -86,7 +86,7 @@ describe("file", () => {
         let file = new File(oldpath);
 
         file.create("")
-            .then(() => file.move(newpath))
+            .then(() => file.moveto(newpath))
             .then(() => file.exists())
             .then(res => {
                 if (!res) {
@@ -146,7 +146,7 @@ describe("file", () => {
     it("should create symlink to file", (assert, done) => {
         let file = new File("/tmp/file-symlink-test-" + Math.random());
 
-        file.symlink("/path/to/some/file")
+        file.symlinkto("/path/to/some/file")
             .then(res => {
                 assert.ok(res);
                 done();
