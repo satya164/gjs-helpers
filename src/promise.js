@@ -1,4 +1,4 @@
-const Mainloop = imports.mainloop;
+const GLib = imports.gi.GLib;
 
 const PENDING = 0,
       FULFILLED = 1,
@@ -46,7 +46,7 @@ function Promise(executor) {
     }
 
     // Run the executor at a delay to let all handlers attach
-    Mainloop.timeout_add(10, () => {
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 10, () => {
         try {
             executor(resolve, reject);
         } catch (e) {
@@ -54,7 +54,7 @@ function Promise(executor) {
         }
 
         return false; // Don't repeat
-    }, null);
+    });
 }
 
 // Appends fulfillment and rejection handlers to the promise
