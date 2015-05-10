@@ -32,6 +32,14 @@ function Promise(executor) {
 
             if (cb === null) {
                 (this._state === FULFILLED ? deferred.resolve : deferred.reject)(this._value);
+
+                return false;
+            }
+
+            if (typeof cb !== "function") {
+                deferred.reject(this._value);
+
+                return false;
             }
 
             let ret;
@@ -41,10 +49,12 @@ function Promise(executor) {
             } catch (e) {
                 deferred.reject(e);
 
-                return;
+                return false;
             }
 
             deferred.resolve(ret);
+
+            return false; // Don't repeat
         });
     }
 
