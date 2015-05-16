@@ -41,6 +41,32 @@ describe("promises", () => {
         });
     });
 
+    it("should resolve promise after the async task is finished", (assert, done) => {
+        let promise = new Promise(resolve => {
+            setTimeout(resolve, 20);
+        });
+
+        setTimeout(function() {
+            promise.then(() => {
+                assert.ok(true);
+                done();
+            });
+        }, 50);
+    });
+
+    it("should reject promise after the async task is finished", (assert, done) => {
+        let promise = new Promise((resolve, reject) => {
+            setTimeout(reject, 20);
+        });
+
+        setTimeout(function() {
+            promise["catch"](() => {
+                assert.ok(true);
+                done();
+            });
+        }, 50);
+    });
+
     it("should reject promise on error", (assert, done) => {
         let promise = new Promise(() => {
             throw new Error();
