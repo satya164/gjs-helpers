@@ -16,9 +16,9 @@ First you'll need to add the current directory to search path.
 imports.searchPath.unshift(".");
 ```
 
-Then, say you want to use the `Promise` library, place the `promise.js` file in the same directory and import it,
+Then, say you want to use the `Promise` library, place the `promise.js` file in a directory named `helpers`, and import it,
 ```javascript
-const Promise = imports.promise.Promise;
+const Promise = imports.helpers.promise.Promise;
 ```
 
 Now you have access to the `Promise` object for use.
@@ -30,7 +30,12 @@ let promise = new Promise((resolve, reject) => {
         resolve(source.make_directory_finish(res));
     });
 });
+
+promise.then(() => print("Directory created successfully!"));
+promise.catch(() => print("Directory creation failed!"));
 ```
+
+Note that the `Promise` library automatically catches synchronously thrown errors and the promise fails.
 
 ## Running tests
 
