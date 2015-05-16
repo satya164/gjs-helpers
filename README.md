@@ -6,6 +6,7 @@ Currently these include,
 * `Promise` implementation based on the [ES6 spec](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 * Polyfill for `setTimeout` and `setInterval`.
 * Promise based library for working with files.
+* Promise based library for fetching data over network.
 
 ## Usage
 
