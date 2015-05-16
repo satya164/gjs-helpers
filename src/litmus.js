@@ -27,7 +27,7 @@ Assert.prototype.notEqual = function(actual, expected, msg) {
     this.ok((actual !== expected), msg);
 }
 
-Assert.prototype["throws"] = function(func, msg) {
+Assert.prototype.throws = function(func, msg) {
     let thrown = false;
 
     try {

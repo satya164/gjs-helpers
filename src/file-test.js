@@ -14,7 +14,7 @@ describe("file", () => {
                 assert.ok(res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -28,7 +28,7 @@ describe("file", () => {
                 assert.ok(!res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -42,7 +42,7 @@ describe("file", () => {
                 assert.ok(/localhost/.test(res));
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -57,7 +57,7 @@ describe("file", () => {
                 assert.equal(res, "Hello world!");
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -73,7 +73,7 @@ describe("file", () => {
                 assert.equal(res, "Apple, Orange!");
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -97,7 +97,7 @@ describe("file", () => {
                             assert.ok(r);
                             done();
                         })
-                        ["catch"](() => {
+                        .catch(() => {
                             assert.ok(false);
                             done();
                         });
@@ -106,7 +106,7 @@ describe("file", () => {
                     done();
                 }
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -130,7 +130,7 @@ describe("file", () => {
                             assert.ok(r);
                             done();
                         })
-                        ["catch"](() => {
+                        .catch(() => {
                             assert.ok(false);
                             done();
                         });
@@ -139,7 +139,7 @@ describe("file", () => {
                     done();
                 }
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -157,7 +157,7 @@ describe("file", () => {
                 assert.ok(!res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -167,13 +167,13 @@ describe("file", () => {
         let file = new File("/tmp/file-delete-test-" + Math.random());
 
         file.create()
-            .then(() => file["delete"]())
+            .then(() => file.delete())
             .then(() => file.exists())
             .then(res => {
                 assert.ok(!res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -188,7 +188,7 @@ describe("file", () => {
                 assert.ok(res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });
@@ -202,7 +202,7 @@ describe("file", () => {
                 assert.ok(res);
                 done();
             })
-            ["catch"](() => {
+            .catch(() => {
                 assert.ok(false);
                 done();
             });

@@ -63,7 +63,7 @@ File.prototype.rename = function(name) {
     });
 }
 
-File.prototype["delete"] = function() {
+File.prototype.delete = function() {
     return new Promise(resolve => {
         this.file.delete_async(GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.delete_finish(res)));
     });

@@ -8,11 +8,11 @@ const Promise = imports.promise.Promise;
 
 describe("promises", () => {
     it("should throw error when called without 'new'", (assert) => {
-        assert["throws"](() => Promise(resolve => resolve()));
+        assert.throws(() => Promise(resolve => resolve()));
     });
 
     it("should throw error when called without a function", (assert) => {
-        assert["throws"](() => {
+        assert.throws(() => {
             let promise = new Promise(null);
 
             promise.then(() => {});
@@ -35,7 +35,7 @@ describe("promises", () => {
             setTimeout(reject, 50);
         })
 
-        promise["catch"](() => {
+        promise.catch(() => {
             assert.ok(true);
             done();
         });
@@ -60,7 +60,7 @@ describe("promises", () => {
         });
 
         setTimeout(function() {
-            promise["catch"](() => {
+            promise.catch(() => {
                 assert.ok(true);
                 done();
             });
@@ -72,7 +72,7 @@ describe("promises", () => {
             throw new Error();
         });
 
-        promise["catch"](() => {
+        promise.catch(() => {
             assert.ok(true);
             done();
         });
@@ -161,7 +161,7 @@ describe("promises", () => {
             }, 50);
         }));
 
-        Promise.race(promises)["catch"](value => {
+        Promise.race(promises).catch(value => {
             if (resolved) {
                 return;
             }
@@ -185,7 +185,7 @@ describe("promises", () => {
     it("should reject promise with value", (assert, done) => {
         let promise = Promise.reject(12);
 
-        promise["catch"](value => {
+        promise.catch(value => {
             assert.equal(value, 12);
             done();
         });

@@ -149,7 +149,7 @@ Promise.prototype.then = function(onFulfilled, onRejected) {
 }
 
 // Appends a rejection handler callback to the promise
-Promise.prototype["catch"] = function(onRejected) {
+Promise.prototype.catch = function(onRejected) {
     return this.then(null, onRejected);
 }
 
