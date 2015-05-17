@@ -15,12 +15,12 @@ describe("fetch", () => {
                         done();
                     });
                 } else {
-                    assert.ok(false);
+                    assert.fail();
                     done();
                 }
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -29,7 +29,7 @@ describe("fetch", () => {
         fetch("http://someinvalidurl.com")
             .then(response => {
                 if (response.ok) {
-                    assert.ok(false);
+                    assert.fail();
                     done();
                 } else {
                     assert.ok(true);
@@ -37,7 +37,7 @@ describe("fetch", () => {
                 }
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -50,7 +50,7 @@ describe("fetch", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });

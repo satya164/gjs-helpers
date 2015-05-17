@@ -24,7 +24,7 @@ describe("timing events", () => {
         let id = setTimeout(() => {
             called = true;
 
-            assert.ok(false);
+            assert.fail();
             done();
         }, 1000);
 

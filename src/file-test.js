@@ -15,7 +15,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -29,7 +29,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -43,7 +43,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -58,7 +58,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -74,7 +74,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -98,16 +98,16 @@ describe("file", () => {
                             done();
                         })
                         .catch(() => {
-                            assert.ok(false);
+                            assert.fail();
                             done();
                         });
                 } else {
-                    assert.ok(false);
+                    assert.fail();
                     done();
                 }
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -131,7 +131,7 @@ describe("file", () => {
                             done();
                         })
                         .catch(() => {
-                            assert.ok(false);
+                            assert.fail();
                             done();
                         });
                 } else {
@@ -140,7 +140,7 @@ describe("file", () => {
                 }
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -158,7 +158,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -174,7 +174,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -189,7 +189,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });
@@ -203,7 +203,7 @@ describe("file", () => {
                 done();
             })
             .catch(() => {
-                assert.ok(false);
+                assert.fail();
                 done();
             });
     });

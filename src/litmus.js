@@ -17,39 +17,43 @@ Assert.prototype.ok = function(actual, msg) {
     }
 
     print("    " + title);
-}
+};
+
+Assert.prototype.fail = function(msg) {
+    this.ok(false, msg);
+};
 
 Assert.prototype.equal = function(actual, expected, msg) {
     this.ok((actual === expected), msg);
-}
+};
 
 Assert.prototype.notEqual = function(actual, expected, msg) {
     this.ok((actual !== expected), msg);
-}
+};
 
 Assert.prototype.throws = function(func, msg) {
     let thrown = false;
 
     try {
-        func()
+        func();
     } catch (e) {
         thrown = true;
     }
 
     this.ok(thrown, msg);
-}
+};
 
 Assert.prototype.doesNotThrow = function(func, msg) {
     let thrown = false;
 
     try {
-        func()
+        func();
     } catch (e) {
         thrown = true;
     }
 
     this.ok(!thrown, msg);
-}
+};
 
 function it(desc, callback) {
     count++;
