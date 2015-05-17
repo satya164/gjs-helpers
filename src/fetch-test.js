@@ -6,21 +6,40 @@ const it = imports.litmus.it;
 const fetch = imports.fetch.fetch;
 
 describe("fetch", () => {
-    it("should fetch file", (assert, done) => {
+    it("should fetch text", (assert, done) => {
         fetch("https://raw.githubusercontent.com/satya164/gjs-helpers/master/README.md")
             .then(response => {
                 if (response.ok) {
-                    response.blob().then(blob => {
-                        assert.ok(/GNOME JavaScript/.test(blob));
+                    response.text().then(text => {
+                        assert.ok(/GNOME JavaScript/.test(text));
                         done();
                     });
                 } else {
-                    assert.fail();
+                    assert.ok(false);
                     done();
                 }
             })
             .catch(() => {
-                assert.fail();
+                assert.ok(false);
+                done();
+            });
+    });
+
+    it("should fetch json", (assert, done) => {
+        fetch("https://api.github.com/users/satya164")
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(json => {
+                        assert.ok(json.type === "User");
+                        done();
+                    });
+                } else {
+                    assert.ok(false);
+                    done();
+                }
+            })
+            .catch(() => {
+                assert.ok(false);
                 done();
             });
     });
@@ -29,7 +48,7 @@ describe("fetch", () => {
         fetch("http://someinvalidurl.com")
             .then(response => {
                 if (response.ok) {
-                    assert.fail();
+                    assert.ok(false);
                     done();
                 } else {
                     assert.ok(true);
@@ -37,7 +56,7 @@ describe("fetch", () => {
                 }
             })
             .catch(() => {
-                assert.fail();
+                assert.ok(false);
                 done();
             });
     });
@@ -50,7 +69,7 @@ describe("fetch", () => {
                 done();
             })
             .catch(() => {
-                assert.fail();
+                assert.ok(false);
                 done();
             });
     });
