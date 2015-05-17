@@ -5,7 +5,7 @@ imports.searchPath.unshift(".");
 const Promise = imports.promise.Promise;
 
 function Response(message) {
-    this._message = message;
+    this.message = message;
 
     this.headers = message.response_headers;
 
@@ -18,7 +18,15 @@ function Response(message) {
 }
 
 Response.prototype.blob = function() {
-    return new Promise(resolve => resolve(this._message.response_body.data));
+    return new Promise(resolve => resolve(this.message.response_body.data));
+};
+
+Response.prototype.text = function() {
+    return new Promise(resolve => resolve(this.message.response_body.data.toString()));
+};
+
+Response.prototype.json = function() {
+    return new Promise(resolve => resolve(JSON.parse(this.message.response_body.data.toString())));
 };
 
 function fetch(url, options) {
@@ -27,7 +35,7 @@ function fetch(url, options) {
 
         options.method = options.method || "GET";
 
-        let session = new Soup.SessionAsync();
+        let session = new Soup.SessionAsync({ user_agent: "Mozilla/5.0" });
 
         Soup.Session.prototype.add_feature.call(session, new Soup.ProxyResolverDefault());
 
