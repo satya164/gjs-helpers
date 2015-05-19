@@ -11,7 +11,7 @@ function File(path) {
 
 File.prototype.exists = function() {
     return new Promise(resolve => resolve(this.file.query_exists(null)));
-}
+};
 
 File.prototype.read = function() {
     return new Promise(resolve => {
@@ -23,7 +23,7 @@ File.prototype.read = function() {
             resolve(file.read_finish(res).read_bytes(size, null).get_data().toString());
         });
     });
-}
+};
 
 File.prototype.create = function(text, replace) {
     return new Promise(resolve => {
@@ -35,7 +35,7 @@ File.prototype.create = function(text, replace) {
 
         resolve();
     });
-}
+};
 
 File.prototype.append = function(text) {
     return new Promise(resolve => {
@@ -47,34 +47,34 @@ File.prototype.append = function(text) {
 
         resolve();
     });
-}
+};
 
 File.prototype.copyto = function(path, replace) {
     return new Promise(resolve => resolve(this.file.copy(new File(path).file, Gio.FileCopyFlags[replace ? "OVERWRITE" : "NONE"], null, null)));
-}
+};
 
 File.prototype.moveto = function(path) {
     return new Promise(resolve => resolve(this.file.move(new File(path).file, Gio.FileCopyFlags.NONE, null, null)));
-}
+};
 
 File.prototype.rename = function(name) {
     return new Promise(resolve => {
         this.file.set_display_name_async(name, GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.set_display_name_finish(res)));
     });
-}
+};
 
 File.prototype.delete = function() {
     return new Promise(resolve => {
         this.file.delete_async(GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.delete_finish(res)));
     });
-}
+};
 
 File.prototype.mkdir = function() {
     return new Promise(resolve => {
         this.file.make_directory_async(GLib.PRIORITY_DEFAULT, null, (source, res) => resolve(source.make_directory_finish(res)));
     });
-}
+};
 
 File.prototype.symlinkto = function(path) {
     return new Promise(resolve => resolve(this.file.make_symbolic_link(path, null)));
-}
+};

@@ -56,7 +56,7 @@ function Promise(executor) {
 
             return false; // Don't repeat
         });
-    }
+    };
 
     let doresolve = (fn, onFulfilled, onRejected) => {
         let done = false;
@@ -78,7 +78,7 @@ function Promise(executor) {
                 done = true;
 
                 onRejected(reason);
-            })
+            });
         } catch (e) {
             if (done) {
                 return;
@@ -89,7 +89,7 @@ function Promise(executor) {
             onRejected(e);
         }
 
-    }
+    };
 
     let finale = () => {
         for (var i = 0, len = this._deferreds.length; i < len; i++) {
@@ -97,7 +97,7 @@ function Promise(executor) {
         }
 
         this._deferreds = null;
-    }
+    };
 
     let resolve = value => {
         // Call all fulfillment handlers one by one
@@ -123,7 +123,7 @@ function Promise(executor) {
         } catch (e) {
             reject.call(this, e);
         }
-    }
+    };
 
     let reject = reason => {
         // Promise is rejected
@@ -131,7 +131,7 @@ function Promise(executor) {
         this._value = reason;
 
         finale.call(this);
-    }
+    };
 
     doresolve(executor, resolve.bind(this), reject.bind(this));
 }
@@ -146,12 +146,12 @@ Promise.prototype.then = function(onFulfilled, onRejected) {
             onRejected: onRejected
         });
     });
-}
+};
 
 // Appends a rejection handler callback to the promise
 Promise.prototype.catch = function(onRejected) {
     return this.then(null, onRejected);
-}
+};
 
 // Returns a promise that resolves when all of the promises in the iterable
 // argument have resolved
@@ -173,7 +173,7 @@ Promise.all = function(iterable) {
             }, reject);
         });
     });
-}
+};
 
 // Returns a promise that resolves or rejects as soon as one of the promises
 // in the iterable resolves or rejects, with the value or reason from that
@@ -184,14 +184,14 @@ Promise.race = function(iterable) {
     return new Promise((resolve, reject) => {
         promises.forEach(promise => promise.then(resolve, reject));
     });
-}
+};
 
 // Returns a Promise object that is rejected with the given reason
 Promise.reject = function(reason) {
     return new Promise((resolve, reject) => reject(reason));
-}
+};
 
 // Returns a Promise object that is resolved with the given value
 Promise.resolve = function(value) {
     return new Promise(resolve => resolve(value));
-}
+};
